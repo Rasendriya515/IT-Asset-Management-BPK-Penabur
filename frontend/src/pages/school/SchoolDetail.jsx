@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Search, Plus, ArrowLeft, Download, Database, Pencil, Trash2 } from 'lucide-react';
+import { Search, Plus, ArrowLeft, Download, Database, Pencil, Trash2, FileText } from 'lucide-react';
 import MainLayout from '../../components/layout/MainLayout';
 import api from '../../services/api';
 import { ASSET_TYPES, ASSET_CATEGORIES, ASSET_SUBCATEGORIES, TABLE_COLUMNS } from '../../constants/assetData';
 import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
 
 const AREA_MAP = {
@@ -40,7 +42,6 @@ const SchoolDetail = () => {
         setSchoolInfo(data);
         
         let areaName = 'Area Lain';
-        
         if (data.city_code && AREA_MAP[data.city_code.toUpperCase()]) {
           areaName = AREA_MAP[data.city_code.toUpperCase()];
         } else if (data.area_id) {
@@ -48,7 +49,7 @@ const SchoolDetail = () => {
             const areaRes = await api.get(`/areas/${data.area_id}`);
             areaName = areaRes.data.name;
           } catch (e) {
-            console.error("Gagal ambil nama area", e);
+            console.error(e);
           }
         }
 
@@ -152,6 +153,44 @@ const SchoolDetail = () => {
     XLSX.writeFile(workbook, fileName);
   };
 
+  const handleExportPDF = () => {
+    const doc = new jsPDF('landscape'); 
+
+    doc.setFontSize(18);
+    doc.text(`Laporan Aset: ${schoolInfo ? schoolInfo.name : 'Sekolah'}`, 14, 22);
+    
+    doc.setFontSize(11);
+    doc.text(`Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 30);
+
+    const tableColumn = ["No", "Barcode IT", "SN", "Nama Aset", "Tipe", "Kategori", "Lokasi", "Status"];
+    const tableRows = [];
+
+    filteredAssets.forEach((asset, index) => {
+      const assetData = [
+        index + 1,
+        asset.barcode,
+        asset.serial_number,
+        `${asset.brand} - ${asset.model_series}`,
+        getAssetLabel('type_code', asset.type_code, asset),
+        getAssetLabel('category_code', asset.category_code, asset),
+        `Lt. ${asset.floor} - ${asset.room}`,
+        asset.status,
+      ];
+      tableRows.push(assetData);
+    });
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 40,
+      theme: 'grid',
+      headStyles: { fillColor: [0, 74, 173] }, 
+      styles: { fontSize: 8 },
+    });
+
+    doc.save(`Laporan_Aset_${schoolInfo ? schoolInfo.name : 'Sekolah'}.pdf`);
+  };
+
   const handleDelete = async (assetId, assetBarcode) => {
     if (window.confirm(`Yakin ingin menghapus aset ${assetBarcode}? Data yang dihapus tidak bisa kembali.`)) {
       try {
@@ -193,7 +232,7 @@ const SchoolDetail = () => {
               to={schoolInfo ? `/area/${schoolInfo.area_id}` : '/dashboard'} 
               className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-penabur-blue hover:border-penabur-blue transition-all shadow-sm text-sm font-medium mb-3"
             >
-              <ArrowLeft size={16} className="mr-2"/> Kembali ke Area
+              <ArrowLeft size={16} className="mr-2"/> Kembali ke List Sekolah
             </Link>
             <h2 className="text-2xl font-bold text-gray-800 flex items-center">
               <Database className="text-penabur-blue mr-3" />
@@ -252,14 +291,25 @@ const SchoolDetail = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+          
           <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
             <span className="text-gray-500 text-sm font-medium">Menampilkan {filteredAssets.length} data aset</span>
-            <button 
-              onClick={handleExport}
-              className="text-green-600 hover:text-green-700 hover:bg-green-50 px-3 py-1 rounded-md text-sm flex items-center transition-colors font-medium border border-transparent hover:border-green-200"
-            >
-              <Download size={16} className="mr-2"/> Export Excel
-            </button>
+            
+            <div className="flex space-x-2">
+                <button 
+                  onClick={handleExportPDF}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-md text-sm flex items-center transition-colors font-medium border border-transparent hover:border-red-200"
+                >
+                  <FileText size={16} className="mr-2"/> Export PDF
+                </button>
+
+                <button 
+                  onClick={handleExport}
+                  className="text-green-600 hover:text-green-700 hover:bg-green-50 px-3 py-1 rounded-md text-sm flex items-center transition-colors font-medium border border-transparent hover:border-green-200"
+                >
+                  <Download size={16} className="mr-2"/> Export Excel
+                </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto pb-2">

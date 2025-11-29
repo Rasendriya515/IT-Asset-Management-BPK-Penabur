@@ -107,39 +107,30 @@ export const ASSET_SUBCATEGORIES = {
 export const TABLE_COLUMNS = [
   { key: 'barcode', label: 'Barcode IT', minWidth: 'w-48', showAlways: true },
   { key: 'city_code', label: 'Kota', minWidth: 'w-20', showAlways: true },
-  
-  { key: 'type_code', label: 'Tipe', minWidth: 'w-20', showAlways: true },
-  { key: 'category_code', label: 'Kategori', minWidth: 'w-24', showAlways: true },
-  { key: 'subcategory_code', label: 'Jenis', minWidth: 'w-24', showAlways: true },
-
-  { key: 'procurement_month', label: 'Bln', minWidth: 'w-16', showAlways: true },
-  { key: 'procurement_year', label: 'Thn', minWidth: 'w-16', showAlways: true },
-
+  { key: 'type_code', label: 'Tipe Aset', minWidth: 'w-20', showAlways: true },
+  { key: 'category_code', label: 'Kategori Aset', minWidth: 'w-24', showAlways: true },
+  { key: 'subcategory_code', label: 'Jenis Aset', minWidth: 'w-24', showAlways: true },
+  { key: 'procurement_month', label: 'Bulan Pengadaan', minWidth: 'w-16', showAlways: true },
+  { key: 'procurement_year', label: 'Tahun Pengadaan', minWidth: 'w-16', showAlways: true },
   { key: 'floor', label: 'Lantai', minWidth: 'w-20', showAlways: true },
-  { key: 'sequence_number', label: 'No Urut', minWidth: 'w-24', showAlways: true },
+  { key: 'sequence_number', label: 'No Urut Barang', minWidth: 'w-24', showAlways: true },
   { key: 'placement', label: 'Penempatan', minWidth: 'w-32', showAlways: true },
-  
   { key: 'brand', label: 'Brand', minWidth: 'w-32', showAlways: true },
   { key: 'room', label: 'Ruangan', minWidth: 'w-32', showAlways: true },
   { key: 'model_series', label: 'Tipe/Seri', minWidth: 'w-40', showAlways: true },
-
   { key: 'ip_address', label: 'IP Address', minWidth: 'w-36', showAlways: true },
   { key: 'mac_address', label: 'MAC Address', minWidth: 'w-36', showAlways: true },
   { key: 'serial_number', label: 'Serial Number', minWidth: 'w-40', showAlways: true },
-
   { key: 'status', label: 'Status', minWidth: 'w-32', showAlways: true },
-
+  { key: 'username', label: 'Username', minWidth: 'w-32', showAlways: true },
+  { key: 'password', label: 'Password', minWidth: 'w-32', showAlways: true },
+  { key: 'assigned_to', label: 'Pengguna', minWidth: 'w-32', showAlways: true },
   { key: 'processor', label: 'Processor', minWidth: 'w-32', showAlways: false },
   { key: 'ram', label: 'RAM', minWidth: 'w-24', showAlways: false },
   { key: 'storage', label: 'Storage', minWidth: 'w-24', showAlways: false },
   { key: 'os', label: 'OS', minWidth: 'w-24', showAlways: false },
-
   { key: 'connect_to', label: 'Connect To', minWidth: 'w-32', showAlways: false },
   { key: 'channel', label: 'Channel', minWidth: 'w-24', showAlways: false },
-
-  { key: 'username', label: 'Username', minWidth: 'w-32', showAlways: false },
-  { key: 'password', label: 'Password', minWidth: 'w-32', showAlways: false },
-  { key: 'assigned_to', label: 'Pengguna', minWidth: 'w-32', showAlways: false },
 ];
 
 export const CITIES = [

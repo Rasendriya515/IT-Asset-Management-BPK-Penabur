@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileClock, Search, History } from 'lucide-react';
+import { FileClock, Search, History, MapPin } from 'lucide-react';
 import MainLayout from '../../components/layout/MainLayout';
 import api from '../../services/api';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
@@ -11,7 +11,7 @@ const UpdateHistory = () => {
   const { setCrumbs } = useBreadcrumb();
 
   useEffect(() => {
-    setCrumbs(['Update History']); 
+    setCrumbs(['Update History']);
   }, []);
 
   useEffect(() => {
@@ -77,31 +77,46 @@ const UpdateHistory = () => {
                             </div>
 
                             <div className="flex-1">
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <p className="text-sm font-bold text-gray-800">
-                                            <span className={`uppercase mr-2 px-2 py-0.5 rounded text-[10px] ${
+                                <div className="flex flex-col md:flex-row justify-between items-start">
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className={`uppercase px-2 py-0.5 rounded text-[10px] font-bold ${
                                                 log.action === 'CREATE' ? 'bg-green-100 text-green-700' :
                                                 log.action === 'DELETE' ? 'bg-red-100 text-red-700' :
                                                 'bg-yellow-100 text-yellow-700'
                                             }`}>
                                                 {log.action}
                                             </span>
-                                            {log.asset_name || 'Unknown Asset'}
-                                        </p>
-                                        <p className="text-xs text-penabur-blue font-mono mt-1">
+                                            <span className="text-sm font-bold text-gray-800">
+                                                {log.asset_name || 'Unknown Asset'}
+                                            </span>
+                                        </div>
+                                        
+                                        <p className="text-xs text-penabur-blue font-mono mb-1 font-semibold">
                                             {log.asset_barcode}
                                         </p>
-                                        <p className="text-sm text-gray-600 mt-1">
-                                            {log.details}
+                                        <div className="flex items-center text-xs text-gray-500 mb-2">
+                                            <MapPin size={12} className="mr-1 text-gray-400"/>
+                                            <span className="font-medium text-gray-600">
+                                                {log.area_name || 'Area -'}
+                                            </span>
+                                            <span className="mx-1">•</span>
+                                            <span className="font-medium text-gray-600">
+                                                {log.school_name || 'Sekolah -'}
+                                            </span>
+                                        </div>
+
+                                        <p className="text-sm text-gray-600 italic border-l-2 border-gray-200 pl-2">
+                                            "{log.details}"
                                         </p>
                                     </div>
-                                    <div className="text-right">
+                                    
+                                    <div className="text-right mt-2 md:mt-0 min-w-[120px]">
                                         <p className="text-xs text-gray-500 font-medium">
                                             {formatDate(log.created_at)}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1">
-                                            by {log.actor}
+                                            by <span className="font-semibold text-gray-600">{log.actor}</span>
                                         </p>
                                     </div>
                                 </div>

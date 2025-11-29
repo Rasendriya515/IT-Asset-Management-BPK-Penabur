@@ -1,25 +1,20 @@
-from typing import Any
+from typing import Any, List
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from app.db.session import get_db
 from app.models.asset import Asset, AssetStatus
-from app.schemas.asset import AssetResponse
+from app.models.location import School, Area
 
 router = APIRouter()
 
 @router.get("/stats")
 def get_dashboard_stats(db: Session = Depends(get_db)):
     """
-    Mengambil ringkasan data untuk Dashboard:
-    1. Total Aset
-    2. Total Hardware
-    3. Aset Perlu Perhatian (Rusak/Perbaikan/Terkendala)
-    4. Grafik Pengadaan tahun ini (Group by Month)
-    5. 5 Aset Terbaru
+    Mengambil ringkasan data untuk Dashboard.
     """
-    total_assets = db.query(Asset).count()
     
+    total_assets = db.query(Asset).count()
     total_hardware = db.query(Asset).filter(Asset.type_code == "HW").count()
     
     need_attention = db.query(Asset).filter(
@@ -35,7 +30,11 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
         if month in chart_data:
             chart_data[month] = count
 
-    recent_assets = db.query(Asset).order_by(Asset.created_at.desc()).limit(5).all()
+    recent_assets = db.query(Asset)\
+        .options(joinedload(Asset.school).joinedload(School.area))\
+        .order_by(Asset.created_at.desc())\
+        .limit(5)\
+        .all()
 
     return {
         "total_assets": total_assets,

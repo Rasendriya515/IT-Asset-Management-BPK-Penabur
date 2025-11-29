@@ -10,6 +10,7 @@ import ServiceHistory from './pages/service/ServiceHistory';
 import AddService from './pages/service/AddService';
 import UpdateHistory from './pages/service/UpdateHistory';
 import Profile from './pages/profile/Profile';
+import EditService from './pages/service/EditService';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 
 const ProtectedRoute = ({ children }) => {
@@ -101,6 +102,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/service-history/edit/:id" 
+          element={
+          <ProtectedRoute>
+            <EditService />
             </ProtectedRoute>
           } 
         />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import MainLayout from '../../components/layout/MainLayout';
-import { Monitor, Server, Wifi, Database, TrendingUp, AlertCircle, Calendar, Loader2 } from 'lucide-react';
+import { Monitor, Database, TrendingUp, AlertCircle, Calendar, Loader2 } from 'lucide-react';
 import api from '../../services/api';
 import { Link } from 'react-router-dom';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
@@ -25,7 +25,7 @@ const Dashboard = () => {
   const { setCrumbs } = useBreadcrumb();
 
   useEffect(() => {
-    setCrumbs(['Dashboard']); 
+    setCrumbs(['Dashboard']);
   }, []);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const Dashboard = () => {
         const res = await api.get('/dashboard/stats');
         setStats(res.data);
       } catch (error) {
-        console.error("Gagal ambil statistik:", error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -58,14 +58,17 @@ const Dashboard = () => {
   return (
     <MainLayout>
       <div className="space-y-6">
+        
+        {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-800">Dashboard Overview</h2>
+          <h2 className="text-2xl font-bold text-gray-800">IT Asset Management - BPK Penabur</h2>
           <div className="text-sm text-gray-500 flex items-center bg-white px-3 py-1 rounded-lg border border-gray-200">
             <Calendar size={14} className="mr-2"/> 
             Data Realtime
           </div>
         </div>
 
+        {/* 1. Baris Statistik */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard 
             title="Total Aset" 
@@ -87,26 +90,31 @@ const Dashboard = () => {
           />
           <StatCard 
             title="Aset Baru (Bln Ini)" 
-            count={chartValues[new Date().getMonth()] || 0}
+            count={chartValues[new Date().getMonth()] || 0} 
             icon={<TrendingUp size={24} className="text-green-600"/>} 
             color="bg-green-100" 
           />
         </div>
 
+        {/* 2. Baris Chart & Recent History */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Chart Pengadaan Per Bulan */}
           <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 className="font-bold text-gray-800 mb-4">Statistik Pengadaan Aset (Berdasarkan Bulan)</h3>
             <div className="h-64 bg-gray-50 rounded-lg flex items-end justify-around p-4 border border-dashed border-gray-300">
               
               {["01","02","03","04","05","06","07","08","09","10","11","12"].map((monthKey, index) => {
                 const count = stats.chart_data[monthKey] || 0;
-                const numCount = parseInt(count);
+                const numCount = parseInt(count); 
+                
                 let heightPercent = 0;
                 if (numCount > 0) {
                     heightPercent = (numCount / maxChartValue) * 80 + 5;
                 } else {
-                    heightPercent = 5;
-                } 
+                    heightPercent = 5; 
+                }
+
                 const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                 
                 return (
@@ -126,22 +134,32 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          {/* Recent Updates (Dengan Detail Area & Sekolah) */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
             <h3 className="font-bold text-gray-800 mb-4">Aset Terbaru Ditambahkan</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1 overflow-y-auto pr-2 max-h-[300px]">
               {stats.recent_assets.length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-4">Belum ada aktivitas.</p>
               ) : (
                 stats.recent_assets.map((asset) => (
                     <div key={asset.id} className="flex items-start space-x-3 pb-3 border-b border-gray-50 last:border-0">
-                    <div className="bg-green-100 text-green-600 p-2 rounded-full mt-1">
+                    <div className="bg-green-100 text-green-600 p-2 rounded-full mt-1 flex-shrink-0">
                         <TrendingUp size={14} />
                     </div>
-                    <div>
+                    <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-gray-800">Input Aset Baru</p>
-                        <p className="text-xs text-gray-500 line-clamp-1">
+                        
+                        <p className="text-xs text-gray-600 font-bold mt-0.5">
                             {asset.brand} - {asset.model_series || asset.barcode}
                         </p>
+
+                        {/* INFO AREA & SEKOLAH */}
+                        <p className="text-[11px] text-penabur-blue mt-0.5 truncate font-medium">
+                            {asset.school?.area?.name ? `Area ${asset.school.area.name}` : 'Area -'} 
+                            <span className="mx-1 text-gray-400">•</span> 
+                            {asset.school?.name || 'Sekolah -'}
+                        </p>
+
                         <p className="text-[10px] text-gray-400 mt-1">
                             {new Date(asset.created_at).toLocaleDateString('id-ID', {
                                 day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
@@ -153,7 +171,7 @@ const Dashboard = () => {
               )}
             </div>
             
-            <div className="mt-4 pt-2 border-t border-gray-100 text-center">
+            <div className="mt-auto pt-4 border-t border-gray-100 text-center">
                 <Link 
                   to="/update-history" 
                   className="text-xs text-penabur-blue font-medium hover:underline cursor-pointer block w-full"

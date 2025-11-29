@@ -9,6 +9,7 @@ class ServiceBase(BaseModel):
     sn_or_barcode: str
     unit_name: Optional[str] = None
     owner: Optional[str] = None
+    production_year: Optional[str] = None
     issue_description: str
     vendor: str
     status: str

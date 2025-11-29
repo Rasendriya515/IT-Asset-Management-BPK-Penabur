@@ -13,6 +13,7 @@ class ServiceHistory(Base):
     sn_or_barcode = Column(String, nullable=False, index=True) 
     unit_name = Column(String, nullable=True)    
     owner = Column(String, nullable=True)         
+    production_year = Column(String, nullable=True)
     issue_description = Column(String(30), nullable=False)
     vendor = Column(String, nullable=False) 
     status = Column(String, nullable=False)

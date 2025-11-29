@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import { Lock, User, Loader2 } from 'lucide-react';
+import { Lock, User, Loader2, Eye, EyeOff } from 'lucide-react';
 import schoolBg from '../../assets/images/school-bg.jpg';
 import logoBpk from '../../assets/images/logo-bpk.png';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -42,17 +43,17 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-blue-600">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-blue-500">
       <div className="absolute inset-0 z-0">
         <img 
           src={schoolBg}
           alt="Background Sekolah" 
-          className="w-full h-full object-cover opacity-50 filter grayscale-[50%]"
+          className="w-full h-full object-cover opacity-50 filter grayscale"
         />
         <div className="absolute inset-0 bg-blue-900/10 mix-blend-multiply"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-md p-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 mx-4">
+      <div className="relative z-10 w-full max-w-md p-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-2xl border border-white/40 mx-4">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
              <img 
@@ -62,7 +63,7 @@ const Login = () => {
              />
           </div>
           <h1 className="text-2xl font-bold text-gray-800 tracking-wide">IT ASSET MANAGEMENT</h1>
-          <p className="text-sm text-gray-500 font-medium tracking-widest mt-1">BPK PENABUR JAKARTA</p>
+          <p className="text-sm text-gray-500 font-medium tracking-widest mt-1">BPK PENABUR</p>
         </div>
 
         {error && (
@@ -78,7 +79,7 @@ const Login = () => {
               <input 
                 type="text"
                 placeholder="Username"
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-penabur-blue focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-penabur-blue focus:border-transparent outline-none transition-all bg-white/50 focus:bg-white"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -88,13 +89,20 @@ const Login = () => {
             <div className="relative group">
               <Lock className="absolute left-3 top-3 text-gray-400 group-focus-within:text-penabur-blue transition-colors" size={20} />
               <input 
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-penabur-blue focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white"
+                className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-penabur-blue focus:border-transparent outline-none transition-all bg-white/50 focus:bg-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-gray-400 hover:text-penabur-blue transition-colors focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
           </div>
 

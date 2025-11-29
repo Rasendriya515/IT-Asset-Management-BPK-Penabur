@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Map, History, FileClock, LogOut, ChevronDown, ChevronRight, School } from 'lucide-react';
+import { LayoutDashboard, Map, History, FileClock, LogOut, ChevronDown, ChevronRight } from 'lucide-react';
 import api from '../../services/api';
 import logoBpk from '../../assets/images/logo-bpk.png';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -31,7 +31,12 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="hidden md:flex flex-col w-64 bg-penabur-dark h-screen fixed left-0 top-0 text-white shadow-2xl z-20">
+    <div className={`
+      fixed left-0 top-0 h-screen w-64 bg-penabur-dark text-white shadow-2xl z-20 flex flex-col 
+      transition-transform duration-300 ease-in-out
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}>
+      
       <div className="h-24 flex items-center px-6 border-b border-gray-700">
         <img 
           src={logoBpk} 
