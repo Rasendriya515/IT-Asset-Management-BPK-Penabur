@@ -2,8 +2,32 @@ from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import datetime
 import re
+import enum
 
-from app.models.asset import AssetStatus, AssetPlacement
+class AssetStatus(str, enum.Enum):
+    BERFUNGSI = "Berfungsi"
+    TERKENDALA = "Terkendala"
+    PERBAIKAN = "Perbaikan"
+    RUSAK = "Rusak"
+    DIHAPUSKAN = "Dihapuskan"
+
+class AssetPlacement(str, enum.Enum):
+    INDOOR = "Indoor"
+    OUTDOOR = "Outdoor"
+
+class AreaSimple(BaseModel):
+    id: int
+    name: str
+    slug: str
+    class Config:
+        from_attributes = True
+
+class SchoolSimple(BaseModel):
+    id: int
+    name: str
+    area: Optional[AreaSimple] = None
+    class Config:
+        from_attributes = True
 
 class AssetBase(BaseModel):
     city_code: str
@@ -39,13 +63,13 @@ class AssetBase(BaseModel):
     assigned_to: Optional[str] = None
 
     status: AssetStatus = AssetStatus.BERFUNGSI
-    
+
     @field_validator('ip_address')
     def validate_ip(cls, v):
         if v:
             pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
             if not re.match(pattern, v):
-                raise ValueError('Format IP Address salah! Contoh: 192.168.1.1')
+                raise ValueError('Format IP Address salah!')
         return v
 
     @field_validator('mac_address')
@@ -53,7 +77,7 @@ class AssetBase(BaseModel):
         if v:
             pattern = r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
             if not re.match(pattern, v):
-                raise ValueError('Format MAC Address salah! Contoh: 00:1A:2B:3C:4D:5E')
+                raise ValueError('Format MAC Address salah!')
         return v
 
 class AssetCreate(AssetBase):
@@ -67,6 +91,8 @@ class AssetResponse(AssetBase):
     barcode: str
     created_at: datetime
     updated_at: Optional[datetime] = None
+    
+    school: Optional[SchoolSimple] = None
 
     class Config:
         from_attributes = True

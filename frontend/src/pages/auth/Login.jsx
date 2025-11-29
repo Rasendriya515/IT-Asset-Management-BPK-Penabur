@@ -29,13 +29,21 @@ const Login = () => {
         },
       });
 
-      localStorage.setItem('token', response.data.access_token);
-      localStorage.setItem('role', 'admin'); 
+      const { access_token, role } = response.data;
 
-      navigate('/dashboard');
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('role', role);
+
+      if (role === 'admin') {
+        navigate('/dashboard');
+      } else if (role === 'user') {
+        navigate('/user/home');
+      } else {
+        navigate('/dashboard');
+      }
 
     } catch (err) {
-      console.error("Login Error:", err);
+      console.error(err);
       setError('Username atau Password salah!');
     } finally {
       setLoading(false);
@@ -47,7 +55,7 @@ const Login = () => {
       <div className="absolute inset-0 z-0">
         <img 
           src={schoolBg}
-          alt="Background Sekolah" 
+          alt="Background" 
           className="w-full h-full object-cover opacity-50 filter grayscale"
         />
         <div className="absolute inset-0 bg-blue-900/10 mix-blend-multiply"></div>
@@ -58,7 +66,7 @@ const Login = () => {
           <div className="flex justify-center mb-4">
              <img 
                src={logoBpk}
-               alt="Logo BPK PENABUR" 
+               alt="Logo" 
                className="h-24 w-auto object-contain drop-shadow-md hover:scale-105 transition-transform"
              />
           </div>
@@ -117,7 +125,7 @@ const Login = () => {
 
         <div className="mt-8 text-center">
           <p className="text-xs text-gray-400">
-            &copy; 2025 IT Division - BPK PENABUR Jakarta
+            &copy; 2025 IT Asset Management - BPK PENABUR
           </p>
         </div>
       </div>

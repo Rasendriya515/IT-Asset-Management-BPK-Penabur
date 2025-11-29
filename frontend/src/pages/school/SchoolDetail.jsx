@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Search, Plus, ArrowLeft, Download, Database, Pencil, Trash2, FileText } from 'lucide-react';
+import { Search, Plus, ArrowLeft, Download, Database, Pencil, Trash2, FileText, QrCode, X } from 'lucide-react';
 import MainLayout from '../../components/layout/MainLayout';
 import api from '../../services/api';
 import { ASSET_TYPES, ASSET_CATEGORIES, ASSET_SUBCATEGORIES, TABLE_COLUMNS } from '../../constants/assetData';
@@ -8,6 +8,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
+import QRCode from 'react-qr-code';
 
 const AREA_MAP = {
   'BRT': 'Area Barat',
@@ -26,12 +27,14 @@ const SchoolDetail = () => {
   const [assets, setAssets] = useState([]);
   const [schoolInfo, setSchoolInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+  const [areaName, setAreaName] = useState('-'); 
   const [selectedType, setSelectedType] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSub, setSelectedSub] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [selectedAssetQR, setSelectedAssetQR] = useState(null);
+
   const { setCrumbs } = useBreadcrumb();
 
   useEffect(() => {
@@ -40,20 +43,20 @@ const SchoolDetail = () => {
         const res = await api.get(`/schools/${id}`);
         const data = res.data;
         setSchoolInfo(data);
-        
-        let areaName = 'Area Lain';
+        let foundAreaName = 'Area Lain';
         if (data.city_code && AREA_MAP[data.city_code.toUpperCase()]) {
-          areaName = AREA_MAP[data.city_code.toUpperCase()];
-        } else if (data.area_id) {
+          foundAreaName = AREA_MAP[data.city_code.toUpperCase()];
+        } 
+        else if (data.area_id) {
           try {
             const areaRes = await api.get(`/areas/${data.area_id}`);
-            areaName = areaRes.data.name;
+            foundAreaName = areaRes.data.name;
           } catch (e) {
-            console.error(e);
+            console.error("Gagal ambil nama area dari API", e);
           }
         }
-
-        setCrumbs([areaName, data.name]);
+        setAreaName(foundAreaName); 
+        setCrumbs([foundAreaName, data.name]);
 
       } catch (err) {
         console.error("Gagal load info sekolah:", err);
@@ -133,16 +136,8 @@ const SchoolDetail = () => {
 
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
     const columnWidths = [
-      { wch: 5 },  
-      { wch: 25 }, 
-      { wch: 20 }, 
-      { wch: 30 },
-      { wch: 15 }, 
-      { wch: 15 }, 
-      { wch: 20 }, 
-      { wch: 15 }, 
-      { wch: 20 }, 
-      { wch: 15 }, 
+      { wch: 5 }, { wch: 25 }, { wch: 20 }, { wch: 30 },
+      { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, 
     ];
     worksheet['!cols'] = columnWidths;
 
@@ -155,10 +150,8 @@ const SchoolDetail = () => {
 
   const handleExportPDF = () => {
     const doc = new jsPDF('landscape'); 
-
     doc.setFontSize(18);
     doc.text(`Laporan Aset: ${schoolInfo ? schoolInfo.name : 'Sekolah'}`, 14, 22);
-    
     doc.setFontSize(11);
     doc.text(`Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}`, 14, 30);
 
@@ -196,7 +189,6 @@ const SchoolDetail = () => {
       try {
         setLoading(true);
         await api.delete(`/assets/${assetId}`);
-        
         const params = {
           school_id: id,
           type_code: selectedType || undefined,
@@ -204,7 +196,6 @@ const SchoolDetail = () => {
         };
         const assetRes = await api.get('/assets', { params });
         setAssets(assetRes.data);
-        
         alert("Aset berhasil dihapus!");
       } catch (error) {
         console.error("Gagal hapus:", error);
@@ -213,6 +204,52 @@ const SchoolDetail = () => {
         setLoading(false);
       }
     }
+  };
+  const handleViewQR = (asset) => {
+    setSelectedAssetQR(asset);
+    setQrModalOpen(true);
+  };
+
+  const downloadQR = () => {
+    const svg = document.getElementById("qr-code-svg");
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `QR_${selectedAssetQR.barcode}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
+  const getQRContent = (asset) => {
+    if(!asset || !schoolInfo) return "";
+    
+    const baseUrl = window.location.origin; 
+    const assetUrl = `${baseUrl}/mobile/asset/${asset.id}`; 
+    const detailText = `
+BPK PENABUR ASSET
+------------------
+Nama: ${asset.brand} ${asset.model_series}
+SN: ${asset.serial_number}
+Barcode: ${asset.barcode}
+Area: ${areaName}
+Sekolah: ${schoolInfo.name}
+Lokasi: ${asset.room} (Lt. ${asset.floor})
+------------------
+Link: ${assetUrl}
+    `.trim();
+
+    return detailText;
   };
 
   const visibleColumns = getVisibleColumns();
@@ -232,7 +269,7 @@ const SchoolDetail = () => {
               to={schoolInfo ? `/area/${schoolInfo.area_id}` : '/dashboard'} 
               className="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-md text-gray-600 hover:text-penabur-blue hover:border-penabur-blue transition-all shadow-sm text-sm font-medium mb-3"
             >
-              <ArrowLeft size={16} className="mr-2"/> Kembali ke List Sekolah
+              <ArrowLeft size={16} className="mr-2"/> Kembali ke Area
             </Link>
             <h2 className="text-2xl font-bold text-gray-800 flex items-center">
               <Database className="text-penabur-blue mr-3" />
@@ -296,17 +333,10 @@ const SchoolDetail = () => {
             <span className="text-gray-500 text-sm font-medium">Menampilkan {filteredAssets.length} data aset</span>
             
             <div className="flex space-x-2">
-                <button 
-                  onClick={handleExportPDF}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-md text-sm flex items-center transition-colors font-medium border border-transparent hover:border-red-200"
-                >
+                <button onClick={handleExportPDF} className="text-red-600 hover:text-red-700 hover:bg-red-50 px-3 py-1 rounded-md text-sm flex items-center transition-colors font-medium border border-transparent hover:border-red-200">
                   <FileText size={16} className="mr-2"/> Export PDF
                 </button>
-
-                <button 
-                  onClick={handleExport}
-                  className="text-green-600 hover:text-green-700 hover:bg-green-50 px-3 py-1 rounded-md text-sm flex items-center transition-colors font-medium border border-transparent hover:border-green-200"
-                >
+                <button onClick={handleExport} className="text-green-600 hover:text-green-700 hover:bg-green-50 px-3 py-1 rounded-md text-sm flex items-center transition-colors font-medium border border-transparent hover:border-green-200">
                   <Download size={16} className="mr-2"/> Export Excel
                 </button>
             </div>
@@ -322,7 +352,7 @@ const SchoolDetail = () => {
                       {col.label}
                     </th>
                   ))}
-                  <th className="p-4 border-b border-gray-200 text-center sticky right-0 bg-gray-50 shadow-l z-10 w-24">Action</th>
+                  <th className="p-4 border-b border-gray-200 text-center sticky right-0 bg-gray-50 shadow-l z-10 min-w-[200px]">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -337,7 +367,6 @@ const SchoolDetail = () => {
                       
                       {visibleColumns.map((col) => (
                         <td key={col.key} className={`p-4 text-gray-700 ${col.key === 'status' ? 'text-center' : ''}`}>
-                          
                           {col.key === 'status' ? (
                             <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold border ${
                               asset.status === 'Berfungsi' ? 'bg-green-100 text-green-700 border-green-200' :
@@ -364,20 +393,23 @@ const SchoolDetail = () => {
                       <td className="p-3 text-center sticky right-0 bg-white group-hover:bg-blue-50 shadow-l border-l border-gray-100 transition-colors z-10">
                         <div className="flex items-center justify-center space-x-2">
                           
+                          <button 
+                            onClick={() => handleViewQR(asset)}
+                            className="bg-purple-50 text-purple-700 hover:bg-purple-500 hover:text-white border border-purple-200 px-3 py-1.5 rounded-lg transition-all shadow-sm flex items-center text-xs font-bold"
+                            title="View QR Code"
+                          >
+                            <QrCode size={14} className="mr-1.5" /> QR
+                          </button>
+
                           <Link to={`/school/${id}/asset/${asset.id}/edit`}>
-                            <button 
-                                className="bg-yellow-50 text-yellow-700 hover:bg-yellow-500 hover:text-white border border-yellow-200 px-3 py-1.5 rounded-lg transition-all shadow-sm flex items-center text-xs font-bold"
-                                title="Edit Aset"
-                            >
+                            <button className="bg-yellow-50 text-yellow-700 hover:bg-yellow-500 hover:text-white border border-yellow-200 px-3 py-1.5 rounded-lg transition-all shadow-sm flex items-center text-xs font-bold" title="Edit Aset">
                                 <Pencil size={14} className="mr-1.5" /> Edit
                             </button>
                           </Link>
 
                           <button 
                             onClick={() => handleDelete(asset.id, asset.barcode)}
-                            className="bg-red-50 text-red-700 hover:bg-red-600 hover:text-white border border-red-200 px-3 py-1.5 rounded-lg transition-all shadow-sm flex items-center text-xs font-bold"
-                            title="Hapus Aset"
-                          >
+                            className="bg-red-50 text-red-700 hover:bg-red-600 hover:text-white border border-red-200 px-3 py-1.5 rounded-lg transition-all shadow-sm flex items-center text-xs font-bold" title="Hapus Aset">
                             <Trash2 size={14} className="mr-1.5" /> Hapus
                           </button>
 
@@ -391,6 +423,46 @@ const SchoolDetail = () => {
           </div>
         </div>
       </div>
+      {qrModalOpen && selectedAssetQR && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="bg-penabur-blue p-4 flex justify-between items-center text-white">
+              <h3 className="font-bold text-lg flex items-center">
+                <QrCode className="mr-2" /> QR Code Aset
+              </h3>
+              <button onClick={() => setQrModalOpen(false)} className="hover:bg-white/20 p-1 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-8 flex flex-col items-center justify-center space-y-6">
+              <div className="bg-white p-4 rounded-xl border-4 border-gray-100 shadow-inner">
+                <QRCode 
+                    id="qr-code-svg"
+                    value={getQRContent(selectedAssetQR)} 
+                    size={200}
+                    level="H" 
+                />
+              </div>
+              
+              <div className="text-center space-y-1">
+                <p className="font-bold text-gray-800 text-lg">{selectedAssetQR.brand} {selectedAssetQR.model_series}</p>
+                <p className="text-penabur-blue font-mono font-medium">{selectedAssetQR.barcode}</p>
+              </div>
+
+              <div className="flex gap-3 w-full">
+                <button onClick={downloadQR} className="flex-1 bg-penabur-blue text-white py-2.5 rounded-lg font-bold hover:bg-penabur-dark transition-all flex items-center justify-center shadow-lg">
+                    <Download size={18} className="mr-2" /> Download Gambar
+                </button>
+              </div>
+            </div>
+            
+            <div className="bg-gray-50 p-3 text-center text-xs text-gray-400 border-t border-gray-100">
+                Scan untuk melihat detail lengkap aset ini.
+            </div>
+          </div>
+        </div>
+      )}
+
     </MainLayout>
   );
 };

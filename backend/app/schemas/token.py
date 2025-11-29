@@ -1,5 +1,5 @@
-from pydantic import BaseModel
 from typing import Optional
+from pydantic import BaseModel
 
 class Token(BaseModel):
     access_token: str
@@ -7,4 +7,4 @@ class Token(BaseModel):
     role: str
 
 class TokenPayload(BaseModel):
-    sub: Optional[int] = None
+    sub: Optional[str] = None

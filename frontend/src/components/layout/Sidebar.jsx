@@ -113,7 +113,7 @@ const Sidebar = ({ isOpen }) => {
           className="flex items-center w-full px-4 py-2 text-red-300 hover:bg-red-500/20 hover:text-red-100 rounded-lg transition-all"
         >
           <LogOut size={20} className="mr-3" />
-          <span className="font-medium text-sm">Sign Out</span>
+          <span className="font-medium text-sm">Logout</span>
         </button>
       </div>
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import Login from './pages/auth/Login';
 import Dashboard from './pages/dashboard/Dashboard';
 import AreaDetail from './pages/area/AreaDetail';
@@ -8,118 +9,63 @@ import AddAsset from './pages/forms/AddAsset';
 import EditAsset from './pages/forms/EditAsset';
 import ServiceHistory from './pages/service/ServiceHistory';
 import AddService from './pages/service/AddService';
+import EditService from './pages/service/EditService';
 import UpdateHistory from './pages/service/UpdateHistory';
 import Profile from './pages/profile/Profile';
-import EditService from './pages/service/EditService';
-import { BreadcrumbProvider } from './context/BreadcrumbContext';
+import UserHome from './pages/user/UserHome';
+import ScanQR from './pages/user/ScanQR';
+import MobileAssetDetail from './pages/user/MobileAssetDetail';
+import UserAssetDetail from './pages/user/UserAssetDetail';
+import UserProfile from './pages/user/UserProfile';
+import UserAssetList from './pages/user/UserAssetList';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
-  if (!token) return <Navigate to="/" replace />;
+  const role = localStorage.getItem('role');
+
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    if (role === 'user') return <Navigate to="/user/home" replace />;
+    if (role === 'admin') return <Navigate to="/dashboard" replace />;
+  }
+
   return children;
 };
 
-const App = () => {
+function App() {
   return (
-  <BreadcrumbProvider>
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        
-        <Route 
-          path="/dashboard" 
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          } 
-        />
+    <BreadcrumbProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          
+          <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><Dashboard /></ProtectedRoute>} />
+          <Route path="/area/:id" element={<ProtectedRoute allowedRoles={['admin']}><AreaDetail /></ProtectedRoute>} />
+          <Route path="/school/:id" element={<ProtectedRoute allowedRoles={['admin']}><SchoolDetail /></ProtectedRoute>} />
+          <Route path="/school/:id/add" element={<ProtectedRoute allowedRoles={['admin']}><AddAsset /></ProtectedRoute>} />
+          <Route path="/school/:schoolId/asset/:assetId/edit" element={<ProtectedRoute allowedRoles={['admin']}><EditAsset /></ProtectedRoute>} />
+          
+          <Route path="/service-history" element={<ProtectedRoute allowedRoles={['admin']}><ServiceHistory /></ProtectedRoute>} />
+          <Route path="/service-history/add" element={<ProtectedRoute allowedRoles={['admin']}><AddService /></ProtectedRoute>} />
+          <Route path="/service-history/edit/:id" element={<ProtectedRoute allowedRoles={['admin']}><EditService /></ProtectedRoute>} />
+          
+          <Route path="/update-history" element={<ProtectedRoute allowedRoles={['admin']}><UpdateHistory /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute allowedRoles={['admin', 'user']}><Profile /></ProtectedRoute>} />
 
-        <Route 
-          path="/area/:id" 
-          element={
-            <ProtectedRoute>
-              <AreaDetail />
-            </ProtectedRoute>
-          } 
-        />
+          <Route path="/user/home" element={<ProtectedRoute allowedRoles={['user']}><UserHome /></ProtectedRoute>} />
+          <Route path="/user/scan" element={<ProtectedRoute allowedRoles={['user']}><ScanQR /></ProtectedRoute>} />
+          <Route path="/user/asset/:id" element={<ProtectedRoute allowedRoles={['user']}><UserAssetDetail /></ProtectedRoute>} />
+          <Route path="/user/profile" element={<ProtectedRoute allowedRoles={['user']}><UserProfile /></ProtectedRoute>} />
+          <Route path="/user/assets" element={<ProtectedRoute allowedRoles={['user']}><UserAssetList /></ProtectedRoute>} />
 
-        <Route 
-          path="/school/:id" 
-          element={
-            <ProtectedRoute>
-              <SchoolDetail />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/school/:id/add" 
-          element={
-            <ProtectedRoute>
-              <AddAsset />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/school/:schoolId/asset/:assetId/edit" 
-          element={
-            <ProtectedRoute>
-              <EditAsset />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/service-history" 
-          element={
-            <ProtectedRoute>
-              <ServiceHistory />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/service-history/add" 
-          element={
-            <ProtectedRoute>
-              <AddService />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/update-history" 
-          element={
-            <ProtectedRoute>
-              <UpdateHistory />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/profile" 
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-          path="/service-history/edit/:id" 
-          element={
-          <ProtectedRoute>
-            <EditService />
-            </ProtectedRoute>
-          } 
-        />
-        
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
-  </BreadcrumbProvider>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </BreadcrumbProvider>
   );
-};
+}
 
 export default App;
