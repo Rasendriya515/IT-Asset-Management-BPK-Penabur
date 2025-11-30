@@ -218,14 +218,14 @@ const AddAsset = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Kategori <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Kategori Aset<span className="text-red-500">*</span></label>
                 <select name="category_code" value={formData.category_code} required disabled={!formData.type_code} onChange={(e) => setFormData(prev => ({ ...prev, category_code: e.target.value, subcategory_code: '' }))} className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-penabur-blue disabled:bg-gray-50">
                   <option value="">- Pilih -</option>
                   {formData.type_code && ASSET_CATEGORIES[formData.type_code]?.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Jenis (Opsional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jenis Aset (Opsional)</label>
                 <select name="subcategory_code" value={formData.subcategory_code} disabled={!formData.category_code} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-penabur-blue disabled:bg-gray-50">
                   <option value="">- Tidak Ada -</option>
                   {formData.category_code && ASSET_SUBCATEGORIES[formData.category_code]?.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}

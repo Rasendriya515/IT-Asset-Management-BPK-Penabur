@@ -1,7 +1,7 @@
 export const ASSET_TYPES = [
   { code: 'HW', label: 'Hardware' },
   { code: 'MP', label: 'Mobile/Portable' },
-  { code: 'NI', label: 'Network/Infra' },
+  { code: 'NI', label: 'Network/Infrastructure' },
   { code: 'SD', label: 'Server/Data Center' },
   { code: 'SS', label: 'Software/Subscriptions' },
   { code: 'PA', label: 'Peripherals & Accessories' },
@@ -16,7 +16,7 @@ export const ASSET_CATEGORIES = {
     { code: 'KSK', label: 'Kiosk' },
   ],
   'MP': [
-    { code: 'TAB', label: 'Table' },
+    { code: 'TAB', label: 'Tablet' },
     { code: 'SMA', label: 'Smartphone' },
     { code: 'MBP', label: 'Mobile Barcode Phone' },
     { code: 'HHS', label: 'Handheld Scanner' },
@@ -150,6 +150,7 @@ export const CITIES = [
   { code: '13', label: 'Serang' },
   { code: '14', label: 'Sukabumi' },
   { code: '15', label: 'Tasikmalaya' },
+  { code: '16', label: 'Tangerang' },
   { code: '99', label: 'Tirtamarta' },
 ];
 

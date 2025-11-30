@@ -78,7 +78,7 @@ const DesktopHome = () => {
             <div className="relative z-10">
                 <h2 className="text-3xl font-bold mb-2 text-penabur-blue">Halo, {user.full_name}!</h2>
                 <p className="text-gray-500 max-w-lg">
-                    Selamat datang di panel desktop. Gunakan menu di bawah untuk mengelola dan memeriksa aset di lingkungan BPK PENABUR.
+                    Selamat datang! Gunakan menu di bawah untuk mengelola dan memeriksa aset di lingkungan BPK PENABUR.
                 </p>
             </div>
             <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
@@ -107,7 +107,7 @@ const DesktopHome = () => {
             
             <div 
                 onClick={() => navigate('/user/scan')}
-                className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 cursor-pointer transition-all group"
+                className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 cursor-pointer transition-all group flex flex-col items-center text-center"
             >
                 <div className="bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center text-penabur-blue mb-6 group-hover:bg-penabur-blue group-hover:text-white transition-colors">
                     <ScanLine size={32} />
@@ -118,7 +118,7 @@ const DesktopHome = () => {
 
             <div 
                 onClick={() => navigate('/user/assets')}
-                className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 cursor-pointer transition-all group"
+                className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-purple-200 cursor-pointer transition-all group flex flex-col items-center text-center"
             >
                 <div className="bg-purple-50 w-16 h-16 rounded-2xl flex items-center justify-center text-purple-600 mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors">
                     <Package size={32} />
@@ -129,7 +129,7 @@ const DesktopHome = () => {
 
             <div 
                 onClick={() => navigate('/user/profile')}
-                className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-green-200 cursor-pointer transition-all group"
+                className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-green-200 cursor-pointer transition-all group flex flex-col items-center text-center"
             >
                 <div className="bg-green-50 w-16 h-16 rounded-2xl flex items-center justify-center text-green-600 mb-6 group-hover:bg-green-600 group-hover:text-white transition-colors">
                     <User size={32} />
