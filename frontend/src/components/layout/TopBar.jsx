@@ -5,6 +5,7 @@ import api from '../../services/api';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
 
 const BASE_URL = 'http://localhost:8000';
+
 const TopBar = ({ isSidebarOpen, toggleSidebar }) => {
   const { crumbs } = useBreadcrumb();
   const [user, setUser] = useState({ full_name: 'Admin', avatar: null });
@@ -16,7 +17,7 @@ const TopBar = ({ isSidebarOpen, toggleSidebar }) => {
         const res = await api.get('/users/me');
         setUser(res.data);
       } catch (err) {
-        console.error("Gagal load profile", err);
+        console.error(err);
       }
     };
     fetchUser();
@@ -34,7 +35,9 @@ const TopBar = ({ isSidebarOpen, toggleSidebar }) => {
     `}>
       
       <div className="flex items-center justify-between h-full px-6">
+
         <div className="flex items-center">
+            
             <button 
               onClick={toggleSidebar} 
               className="mr-4 text-gray-500 hover:text-penabur-blue p-1 rounded-md hover:bg-gray-100 transition-colors"
@@ -59,6 +62,7 @@ const TopBar = ({ isSidebarOpen, toggleSidebar }) => {
                 ))}
             </div>
         </div>
+
         <div className="flex items-center space-x-4 flex-shrink-0">
             <Link to="/profile" className="flex items-center space-x-3 hover:bg-gray-50 py-1 px-2 rounded-lg transition-colors cursor-pointer">
                 <div className="text-right hidden sm:block">
@@ -79,10 +83,11 @@ const TopBar = ({ isSidebarOpen, toggleSidebar }) => {
 
             <button 
                 onClick={handleLogout}
-                className="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"
+                className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition-all duration-200 hover:shadow-md active:scale-95 flex items-center gap-2 font-bold text-xs border border-red-500"
                 title="Logout"
             >
-                <LogOut size={20} />
+                <LogOut size={16} />
+                <span className="hidden sm:inline">Sign Out</span>
             </button>
         </div>
 

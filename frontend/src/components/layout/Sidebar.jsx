@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Map, History, FileClock, LogOut, ChevronDown, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Map, History, FileClock, LogOut, ChevronDown, ChevronRight, ArrowLeftRight } from 'lucide-react';
 import api from '../../services/api';
 import logoBpk from '../../assets/images/logo-bpk.png';
 
@@ -17,7 +17,7 @@ const Sidebar = ({ isOpen }) => {
         const response = await api.get('/areas');
         setAreas(response.data);
       } catch (error) {
-        console.error("Gagal mengambil data area:", error);
+        console.error(error);
       }
     };
     fetchAreas();
@@ -32,7 +32,7 @@ const Sidebar = ({ isOpen }) => {
 
   return (
     <div className={`
-      fixed left-0 top-0 h-screen w-64 bg-penabur-dark text-white shadow-2xl z-20 flex flex-col 
+      fixed left-0 top-0 h-screen w-64 bg-penabur-dark text-white shadow-2xl z-20 flex flex-col
       transition-transform duration-300 ease-in-out
       ${isOpen ? 'translate-x-0' : '-translate-x-full'}
     `}>
@@ -105,15 +105,25 @@ const Sidebar = ({ isOpen }) => {
           <span className="font-medium text-sm">Update History</span>
         </Link>
 
+        <Link 
+          to="/transfer-asset" 
+          className={`flex items-center px-4 py-3 rounded-lg transition-all ${
+            isActive('/transfer-asset') ? 'bg-penabur-blue text-white shadow-lg' : 'text-blue-100 hover:bg-white/10'
+          }`}
+        >
+          <ArrowLeftRight size={20} className="mr-3" />
+          <span className="font-medium text-sm">Transfer Aset</span>
+        </Link>
+
       </div>
 
       <div className="p-4 border-t border-white/10 bg-black/20">
         <button 
           onClick={handleLogout}
-          className="flex items-center w-full px-4 py-2 text-red-300 hover:bg-red-500/20 hover:text-red-100 rounded-lg transition-all"
+          className="bg-red-600 text-white w-full px-4 py-2.5 rounded-xl hover:bg-red-700 transition-all duration-200 hover:shadow-lg active:scale-95 flex items-center justify-center gap-2 font-bold text-sm border border-red-500"
         >
-          <LogOut size={20} className="mr-3" />
-          <span className="font-medium text-sm">Logout</span>
+          <LogOut size={18} />
+          <span>Sign Out</span>
         </button>
       </div>
 

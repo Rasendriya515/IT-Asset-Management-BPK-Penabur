@@ -58,8 +58,6 @@ const Dashboard = () => {
   return (
     <MainLayout>
       <div className="space-y-6">
-        
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-800">IT Asset Management - BPK Penabur</h2>
           <div className="text-sm text-gray-500 flex items-center bg-white px-3 py-1 rounded-lg border border-gray-200">
@@ -67,8 +65,6 @@ const Dashboard = () => {
             Data Realtime
           </div>
         </div>
-
-        {/* 1. Baris Statistik */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard 
             title="Total Aset" 
@@ -89,17 +85,13 @@ const Dashboard = () => {
             color="bg-red-100" 
           />
           <StatCard 
-            title="Aset Baru (Bln Ini)" 
+            title="Aset Baru (Bulan ini)" 
             count={chartValues[new Date().getMonth()] || 0} 
             icon={<TrendingUp size={24} className="text-green-600"/>} 
             color="bg-green-100" 
           />
         </div>
-
-        {/* 2. Baris Chart & Recent History */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Chart Pengadaan Per Bulan */}
           <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h3 className="font-bold text-gray-800 mb-4">Statistik Pengadaan Aset (Berdasarkan Bulan)</h3>
             <div className="h-64 bg-gray-50 rounded-lg flex items-end justify-around p-4 border border-dashed border-gray-300">
@@ -133,8 +125,6 @@ const Dashboard = () => {
 
             </div>
           </div>
-
-          {/* Recent Updates (Dengan Detail Area & Sekolah) */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
             <h3 className="font-bold text-gray-800 mb-4">Aset Terbaru Ditambahkan</h3>
             <div className="space-y-4 flex-1 overflow-y-auto pr-2 max-h-[300px]">
@@ -152,8 +142,6 @@ const Dashboard = () => {
                         <p className="text-xs text-gray-600 font-bold mt-0.5">
                             {asset.brand} - {asset.model_series || asset.barcode}
                         </p>
-
-                        {/* INFO AREA & SEKOLAH */}
                         <p className="text-[11px] text-penabur-blue mt-0.5 truncate font-medium">
                             {asset.school?.area?.name ? `Area ${asset.school.area.name}` : 'Area -'} 
                             <span className="mx-1 text-gray-400">•</span> 

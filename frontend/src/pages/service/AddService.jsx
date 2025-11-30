@@ -52,8 +52,6 @@ const AddService = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Baris 1 */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">No Tiket</label>
             <input type="text" name="ticket_no" placeholder="Contoh: SIM-SJI..." value={formData.ticket_no} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
@@ -62,21 +60,15 @@ const AddService = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Service</label>
             <input type="date" name="service_date" value={formData.service_date} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
-
-          {/* Baris SN */}
           <div className="md:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100">
             <label className="block text-sm font-bold text-gray-700 mb-1">Serial Number / Barcode IT <span className="text-red-500">*</span></label>
             <input type="text" required name="sn_or_barcode" placeholder="Paste SN atau Barcode disini" value={formData.sn_or_barcode} onChange={handleChange} className="w-full px-3 py-2 border border-blue-300 rounded-lg outline-none focus:ring-2 focus:ring-penabur-blue"/>
             <p className="text-xs text-gray-500 mt-1">Copy dari tabel aset sekolah.</p>
           </div>
-
-          {/* Baris Detail Aset */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Nama Aset</label>
             <input type="text" name="asset_name" placeholder="Laptop Lenovo..." value={formData.asset_name} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
-          
-          {/* Tahun Produksi */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tahun Produksi</label>
             <div className="relative">
@@ -100,14 +92,10 @@ const AddService = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Pemilik (Owner)</label>
             <input type="text" name="owner" placeholder="Nama User" value={formData.owner} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
-
-          {/* Kondisi */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Kondisi / Keluhan <span className="text-red-500">*</span></label>
             <input type="text" required maxLength="30" name="issue_description" placeholder="Max 30 Karakter (Contoh: LCD Pecah)" value={formData.issue_description} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
-
-          {/* Vendor & Status */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Vendor <span className="text-red-500">*</span></label>
             <select name="vendor" value={formData.vendor} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none">

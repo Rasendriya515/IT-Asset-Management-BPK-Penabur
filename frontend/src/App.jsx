@@ -18,6 +18,7 @@ import MobileAssetDetail from './pages/user/MobileAssetDetail';
 import UserAssetDetail from './pages/user/UserAssetDetail';
 import UserProfile from './pages/user/UserProfile';
 import UserAssetList from './pages/user/UserAssetList';
+import TransferAset from './pages/asset/TransferAset';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
@@ -54,6 +55,8 @@ function App() {
           
           <Route path="/update-history" element={<ProtectedRoute allowedRoles={['admin']}><UpdateHistory /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute allowedRoles={['admin', 'user']}><Profile /></ProtectedRoute>} />
+
+          <Route path="/transfer-asset" element={<ProtectedRoute allowedRoles={['admin']}><TransferAset /></ProtectedRoute>} />
 
           <Route path="/user/home" element={<ProtectedRoute allowedRoles={['user']}><UserHome /></ProtectedRoute>} />
           <Route path="/user/scan" element={<ProtectedRoute allowedRoles={['user']}><ScanQR /></ProtectedRoute>} />
