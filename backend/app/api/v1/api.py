@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import areas, auth, assets, schools, dashboard, service_histories, logs, users, transfers
+from app.api.v1.endpoints import areas, auth, assets, schools, dashboard, service_histories, logs, users, transfers, master
 
 api_router = APIRouter()
 
@@ -12,3 +12,4 @@ api_router.include_router(service_histories.router, prefix="/services", tags=["s
 api_router.include_router(logs.router, prefix="/logs", tags=["logs"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(transfers.router, prefix="/transfers", tags=["transfers"])
+api_router.include_router(master.router, prefix="/master", tags=["master-options"])

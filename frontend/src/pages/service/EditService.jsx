@@ -4,13 +4,13 @@ import { ArrowLeft, Save, Wrench, CalendarDays, Loader2 } from 'lucide-react';
 import MainLayout from '../../components/layout/MainLayout';
 import api from '../../services/api';
 
-const VENDORS = ['GROTECH', 'FIKACIA', 'VV COMPUTER', 'Maestro Komputer', 'ELGITREOTECH', 'CENTRAL BARCODE', 'DIGITAL SISTEM', 'Bp Dwi'];
-
 const EditService = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [masterOptions, setMasterOptions] = useState([]);
 
   const [formData, setFormData] = useState({
     ticket_no: '', 
@@ -21,13 +21,15 @@ const EditService = () => {
     owner: '', 
     production_year: '',
     issue_description: '', 
-    vendor: 'GROTECH', 
-    status: 'Progress'
+    vendor: '', 
+    status: ''
   });
 
   useEffect(() => {
-    const fetchService = async () => {
+    const initData = async () => {
       try {
+        const masterRes = await api.get('/master');
+        setMasterOptions(masterRes.data);
         const res = await api.get(`/services`); 
         const found = res.data.find(s => s.id === parseInt(id));
         
@@ -41,9 +43,12 @@ const EditService = () => {
                 owner: found.owner || '',
                 production_year: found.production_year || '',
                 issue_description: found.issue_description || '',
-                vendor: found.vendor || 'GROTECH',
-                status: found.status || 'Progress'
+                vendor: found.vendor || '',
+                status: found.status || ''
             });
+        } else {
+            alert("Data service tidak ditemukan");
+            navigate('/service-history');
         }
       } catch (error) {
         console.error("Gagal load data", error);
@@ -51,8 +56,12 @@ const EditService = () => {
         setLoading(false);
       }
     };
-    fetchService();
-  }, [id]);
+    initData();
+  }, [id, navigate]);
+
+  const getOptions = (category) => {
+    return masterOptions.filter(opt => opt.category === category);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +82,7 @@ const EditService = () => {
 
   const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
 
-  if (loading) return <MainLayout><div className="p-10 text-center">Loading...</div></MainLayout>;
+  if (loading) return <MainLayout><div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin mr-2"/> Memuat Data...</div></MainLayout>;
 
   return (
     <MainLayout>
@@ -93,7 +102,7 @@ const EditService = () => {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">No Tiket</label>
-            <input type="text" name="ticket_no" placeholder="Contoh: SIM-SJI..." value={formData.ticket_no} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
+            <input type="text" name="ticket_no" value={formData.ticket_no} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Service</label>
@@ -102,54 +111,52 @@ const EditService = () => {
 
           <div className="md:col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100">
             <label className="block text-sm font-bold text-gray-700 mb-1">Serial Number / Barcode IT <span className="text-red-500">*</span></label>
-            <input type="text" required name="sn_or_barcode" placeholder="Paste SN atau Barcode disini" value={formData.sn_or_barcode} onChange={handleChange} className="w-full px-3 py-2 border border-blue-300 rounded-lg outline-none focus:ring-2 focus:ring-penabur-blue"/>
+            <input type="text" required name="sn_or_barcode" value={formData.sn_or_barcode} onChange={handleChange} className="w-full px-3 py-2 border border-blue-300 rounded-lg outline-none focus:ring-2 focus:ring-penabur-blue"/>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Nama Aset</label>
-            <input type="text" name="asset_name" placeholder="Laptop Lenovo..." value={formData.asset_name} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
+            <input type="text" name="asset_name" value={formData.asset_name} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tahun Produksi</label>
             <div className="relative">
                 <CalendarDays size={18} className="absolute left-3 top-2.5 text-gray-400"/>
-                <input type="text" name="production_year" placeholder="Contoh: 2021" value={formData.production_year} onChange={handleChange} className="w-full pl-10 pr-3 py-2 border rounded-lg outline-none"/>
+                <input type="text" name="production_year" value={formData.production_year} onChange={handleChange} className="w-full pl-10 pr-3 py-2 border rounded-lg outline-none"/>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Unit Kerja / Sekolah</label>
-            <input type="text" name="unit_name" placeholder="Nama Sekolah" value={formData.unit_name} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
+            <input type="text" name="unit_name" value={formData.unit_name} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Pemilik (Owner)</label>
-            <input type="text" name="owner" placeholder="Nama User" value={formData.owner} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
+            <input type="text" name="owner" value={formData.owner} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">Kondisi / Keluhan <span className="text-red-500">*</span></label>
-            <input type="text" required maxLength="30" name="issue_description" placeholder="Max 30 Karakter" value={formData.issue_description} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
+            <input type="text" required maxLength="50" name="issue_description" value={formData.issue_description} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none"/>
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Vendor <span className="text-red-500">*</span></label>
-            <select name="vendor" value={formData.vendor} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none">
-              {VENDORS.map(v => <option key={v} value={v}>{v}</option>)}
+            <select name="vendor" required value={formData.vendor} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none bg-white">
+              <option value="">- Pilih Vendor -</option>
+              {getOptions('VENDOR').map(v => <option key={v.id} value={v.label}>{v.label}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Status <span className="text-red-500">*</span></label>
-            <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none font-bold text-gray-700">
-              <option value="Progress">⏳ Progress (Sedang Dikerjakan)</option>
-              <option value="Clear">✅ Clear (Selesai)</option>
-              <option value="MEMO">📝 MEMO (Pending/Catatan)</option>
-              <option value="GARANSI">🛡️ GARANSI (Klaim Vendor)</option>
+            <select name="status" required value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg outline-none font-bold text-gray-700 bg-white">
+              <option value="">- Pilih Status -</option>
+              {getOptions('SERVICE_STATUS').map(s => <option key={s.id} value={s.label}>{s.label}</option>)}
             </select>
           </div>
 
           <div className="md:col-span-2 flex justify-end pt-4">
-             <button type="submit" disabled={isSubmitting} className="bg-yellow-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-yellow-600 flex items-center shadow-lg transform hover:-translate-y-1 transition-all">
+             <button type="submit" disabled={isSubmitting} className="bg-yellow-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-yellow-600 flex items-center shadow-lg transform hover:-translate-y-1 transition-all disabled:opacity-70">
                {isSubmitting ? <Loader2 className="animate-spin mr-2"/> : <Save size={20} className="mr-2" />} 
                UPDATE DATA SERVICE
              </button>

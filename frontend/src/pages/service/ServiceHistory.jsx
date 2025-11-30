@@ -123,12 +123,13 @@ const ServiceHistory = () => {
                       
                       <td className="p-4 text-center">
                         <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                          item.status === 'Clear' ? 'bg-green-100 text-green-700 border-green-200' :
-                          item.status === 'Progress' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-                          'bg-yellow-100 text-yellow-700 border-yellow-200'
+                          (item.status.includes('Clear') || item.status.includes('Selesai')) ? 'bg-green-100 text-green-700 border-green-200' :
+                          (item.status.includes('Progress') || item.status.includes('Sedang')) ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                          item.status.includes('GARANSI') ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                          'bg-yellow-100 text-yellow-700 border-yellow-200' // Default fallback (MEMO / Lainnya)
                         }`}>
                           {item.status}
-                        </span>
+                      </span>
                       </td>
 
                       <td className="p-3 text-center sticky right-0 bg-white group-hover:bg-blue-50 shadow-l border-l border-gray-100 transition-colors">

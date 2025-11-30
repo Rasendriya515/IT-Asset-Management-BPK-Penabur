@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Map, History, FileClock, LogOut, ChevronDown, ChevronRight, ArrowLeftRight } from 'lucide-react';
+import { LayoutDashboard, Map, History, FileClock, LogOut, ChevronDown, ChevronRight, ArrowLeftRight, Database, QrCode, Package } from 'lucide-react';
 import api from '../../services/api';
 import logoBpk from '../../assets/images/logo-bpk.png';
 
@@ -10,18 +10,22 @@ const Sidebar = ({ isOpen }) => {
   
   const [isAreaOpen, setIsAreaOpen] = useState(false);
   const [areas, setAreas] = useState([]);
+  const role = localStorage.getItem('role'); 
+  const isAdmin = role === 'admin';
 
   useEffect(() => {
-    const fetchAreas = async () => {
-      try {
-        const response = await api.get('/areas');
-        setAreas(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchAreas();
-  }, []);
+    if (isAdmin) {
+        const fetchAreas = async () => {
+        try {
+            const response = await api.get('/areas');
+            setAreas(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+        };
+        fetchAreas();
+    }
+  }, [isAdmin]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -45,75 +49,120 @@ const Sidebar = ({ isOpen }) => {
         />
         <div>
           <h1 className="font-bold text-sm leading-tight text-white">IT Asset Management</h1>
-          <p className="text-xs text-gray-400 font-medium">BPK Penabur</p>
+          <p className="text-xs text-gray-400 font-medium capitalize">{role || 'User'}</p>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto py-6 space-y-2 px-3">
-        <Link 
-          to="/dashboard" 
-          className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
-            isActive('/dashboard') ? 'bg-penabur-blue text-white shadow-lg' : 'text-blue-100 hover:bg-white/10'
-          }`}
-        >
-          <LayoutDashboard size={20} className="mr-3" />
-          <span className="font-medium text-sm">Dashboard</span>
-        </Link>
 
-        <div>
-          <button 
-            onClick={() => setIsAreaOpen(!isAreaOpen)}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
-              isAreaOpen ? 'bg-white/10 text-white' : 'text-blue-100 hover:bg-white/10'
-            }`}
-          >
-            <div className="flex items-center">
-              <Map size={20} className="mr-3" />
-              <span className="font-medium text-sm">Area Penabur</span>
-            </div>
-            {isAreaOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-          </button>
-
-          {isAreaOpen && (
-            <div className="mt-1 ml-4 space-y-1 border-l-2 border-white/20 pl-2">
-              {areas.map((area) => (
-                <Link
-                  key={area.id}
-                  to={`/area/${area.id}`}
-                  className="block px-4 py-2 text-sm text-blue-200 hover:text-white hover:translate-x-1 transition-all rounded-md"
+        {isAdmin && (
+            <>
+                <Link 
+                to="/dashboard" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
+                    isActive('/dashboard') ? 'bg-penabur-blue text-white shadow-lg' : 'text-blue-100 hover:bg-white/10'
+                }`}
                 >
-                  Area {area.name}
+                <LayoutDashboard size={20} className="mr-3" />
+                <span className="font-medium text-sm">Dashboard Admin</span>
                 </Link>
-              ))}
-            </div>
-          )}
-        </div>
 
-        <Link 
-          to="/service-history" 
-          className="flex items-center px-4 py-3 text-blue-100 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <History size={20} className="mr-3" />
-          <span className="font-medium text-sm">Service History</span>
-        </Link>
+                <div>
+                <button 
+                    onClick={() => setIsAreaOpen(!isAreaOpen)}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 ${
+                    isAreaOpen ? 'bg-white/10 text-white' : 'text-blue-100 hover:bg-white/10'
+                    }`}
+                >
+                    <div className="flex items-center">
+                    <Map size={20} className="mr-3" />
+                    <span className="font-medium text-sm">Area Penabur</span>
+                    </div>
+                    {isAreaOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                </button>
 
-        <Link 
-          to="/update-history" 
-          className="flex items-center px-4 py-3 text-blue-100 hover:bg-white/10 rounded-lg transition-all"
-        >
-          <FileClock size={20} className="mr-3" />
-          <span className="font-medium text-sm">Update History</span>
-        </Link>
+                {isAreaOpen && (
+                    <div className="mt-1 ml-4 space-y-1 border-l-2 border-white/20 pl-2">
+                    {areas.map((area) => (
+                        <Link
+                        key={area.id}
+                        to={`/area/${area.id}`}
+                        className="block px-4 py-2 text-sm text-blue-200 hover:text-white hover:translate-x-1 transition-all rounded-md"
+                        >
+                        Area {area.name}
+                        </Link>
+                    ))}
+                    </div>
+                )}
+                </div>
 
-        <Link 
-          to="/transfer-asset" 
-          className={`flex items-center px-4 py-3 rounded-lg transition-all ${
-            isActive('/transfer-asset') ? 'bg-penabur-blue text-white shadow-lg' : 'text-blue-100 hover:bg-white/10'
-          }`}
-        >
-          <ArrowLeftRight size={20} className="mr-3" />
-          <span className="font-medium text-sm">Transfer Aset</span>
-        </Link>
+                <Link 
+                to="/service-history" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive('/service-history') ? 'bg-penabur-blue' : 'text-blue-100 hover:bg-white/10'}`}
+                >
+                <History size={20} className="mr-3" />
+                <span className="font-medium text-sm">Service History</span>
+                </Link>
+
+                <Link 
+                to="/update-history" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive('/update-history') ? 'bg-penabur-blue' : 'text-blue-100 hover:bg-white/10'}`}
+                >
+                <FileClock size={20} className="mr-3" />
+                <span className="font-medium text-sm">Update History</span>
+                </Link>
+
+                <Link 
+                to="/transfer-asset" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all ${
+                    isActive('/transfer-asset') ? 'bg-penabur-blue text-white shadow-lg' : 'text-blue-100 hover:bg-white/10'
+                }`}
+                >
+                <ArrowLeftRight size={20} className="mr-3" />
+                <span className="font-medium text-sm">Transfer Aset</span>
+                </Link>
+
+                <Link 
+                to="/master-data" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all ${
+                    isActive('/master-data') ? 'bg-penabur-blue text-white shadow-lg' : 'text-blue-100 hover:bg-white/10'
+                }`}
+                >
+                <Database size={20} className="mr-3" />
+                <span className="font-medium text-sm">Master Data</span>
+                </Link>
+            </>
+        )}
+
+        {!isAdmin && role === 'operator' && (
+            <>
+                <Link 
+                to="/operator/dashboard" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
+                    isActive('/operator/dashboard') ? 'bg-penabur-blue text-white shadow-lg' : 'text-blue-100 hover:bg-white/10'
+                }`}
+                >
+                <LayoutDashboard size={20} className="mr-3" />
+                <span className="font-medium text-sm">Dashboard</span>
+                </Link>
+
+                <Link 
+                to="/user/scan" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive('/user/scan') ? 'bg-penabur-blue' : 'text-blue-100 hover:bg-white/10'}`}
+                >
+                <QrCode size={20} className="mr-3" />
+                <span className="font-medium text-sm">Scan QR</span>
+                </Link>
+
+                <Link 
+                to="/user/assets" 
+                className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive('/user/assets') ? 'bg-penabur-blue' : 'text-blue-100 hover:bg-white/10'}`}
+                >
+                <Package size={20} className="mr-3" />
+                <span className="font-medium text-sm">Daftar Aset</span>
+                </Link>
+            </>
+        )}
 
       </div>
 

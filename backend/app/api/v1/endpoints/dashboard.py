@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from app.db.session import get_db
-from app.models.asset import Asset, AssetStatus
+from app.models.asset import Asset
 from app.models.location import School, Area
 
 router = APIRouter()
@@ -16,9 +16,8 @@ def get_dashboard_stats(db: Session = Depends(get_db)):
     
     total_assets = db.query(Asset).count()
     total_hardware = db.query(Asset).filter(Asset.type_code == "HW").count()
-    
     need_attention = db.query(Asset).filter(
-        Asset.status.in_([AssetStatus.RUSAK, AssetStatus.PERBAIKAN, AssetStatus.TERKENDALA])
+        Asset.status.in_(["Rusak", "Perbaikan", "Terkendala"])
     ).count()
 
     chart_data_query = db.query(

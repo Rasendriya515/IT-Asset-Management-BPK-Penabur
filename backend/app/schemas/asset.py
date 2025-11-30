@@ -2,18 +2,6 @@ from pydantic import BaseModel, field_validator
 from typing import Optional
 from datetime import datetime
 import re
-import enum
-
-class AssetStatus(str, enum.Enum):
-    BERFUNGSI = "Berfungsi"
-    TERKENDALA = "Terkendala"
-    PERBAIKAN = "Perbaikan"
-    RUSAK = "Rusak"
-    DIHAPUSKAN = "Dihapuskan"
-
-class AssetPlacement(str, enum.Enum):
-    INDOOR = "Indoor"
-    OUTDOOR = "Outdoor"
 
 class AreaSimple(BaseModel):
     id: int
@@ -40,7 +28,7 @@ class AssetBase(BaseModel):
     floor: str
     sequence_number: str
 
-    placement: Optional[AssetPlacement] = None
+    placement: Optional[str] = None
     brand: Optional[str] = None
     room: Optional[str] = None
     model_series: Optional[str] = None
@@ -62,7 +50,7 @@ class AssetBase(BaseModel):
     password: Optional[str] = None
     assigned_to: Optional[str] = None
 
-    status: AssetStatus = AssetStatus.BERFUNGSI
+    status: str = "Berfungsi"
 
     @field_validator('ip_address')
     def validate_ip(cls, v):

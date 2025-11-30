@@ -41,13 +41,13 @@ const DesktopAssetDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navbar Desktop Simple */}
       <nav className="bg-penabur-blue border-b border-blue-800 px-8 py-4 flex justify-between items-center shadow-md">
         <div className="flex items-center gap-4">
             <div className="bg-white/10 p-1 rounded-lg backdrop-blur-sm"><img src={logoBpk} alt="Logo" className="h-8 w-auto" /></div>
             <h1 className="font-bold text-white text-lg">Detail Aset</h1>
         </div>
-        <button onClick={() => navigate('/user/home')} className="bg-white/10 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-colors flex items-center text-sm font-medium">
+        {/* FIX: Navigate back to asset list instead of home */}
+        <button onClick={() => navigate('/user/assets')} className="bg-white/10 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-colors flex items-center text-sm font-medium">
             <ArrowLeft size={16} className="mr-2" /> Kembali
         </button>
       </nav>
@@ -55,7 +55,6 @@ const DesktopAssetDetail = () => {
       <main className="flex-1 max-w-5xl w-full mx-auto p-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            {/* Kolom Kiri: Header Info */}
             <div className="md:col-span-1 space-y-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
                     <div className="bg-blue-50 w-20 h-20 rounded-full flex items-center justify-center text-penabur-blue mx-auto mb-4">
@@ -66,16 +65,22 @@ const DesktopAssetDetail = () => {
                     <div className="mt-4 bg-gray-100 py-2 px-4 rounded-lg font-mono text-penabur-blue font-bold text-sm inline-block border border-gray-200">
                         {asset.barcode}
                     </div>
+                    
+                    {/* FIX: Improved status color logic */}
                     <div className={`mt-6 py-2 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 ${
-                        asset.status === 'Berfungsi' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        asset.status && (asset.status.toLowerCase().includes('berfungsi') || asset.status.toLowerCase().includes('ok') || asset.status.toLowerCase().includes('baik')) 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-red-100 text-red-700'
                     }`}>
-                        {asset.status === 'Berfungsi' ? <CheckCircle size={16}/> : <AlertTriangle size={16}/>}
+                        {asset.status && (asset.status.toLowerCase().includes('berfungsi') || asset.status.toLowerCase().includes('ok') || asset.status.toLowerCase().includes('baik')) 
+                            ? <CheckCircle size={16}/> 
+                            : <AlertTriangle size={16}/>
+                        }
                         {asset.status}
                     </div>
                 </div>
             </div>
 
-            {/* Kolom Kanan: Detail Lengkap */}
             <div className="md:col-span-2 space-y-6">
                 
                 <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">

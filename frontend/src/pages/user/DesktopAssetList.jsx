@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Search, Loader2, Eye, Database, Building2, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Search, Loader2, Eye, Building2, MapPin, Pencil } from 'lucide-react';
 import api from '../../services/api';
 import logoBpk from '../../assets/images/logo-bpk.png';
 
@@ -27,6 +27,15 @@ const DesktopAssetList = () => {
     const timeoutId = setTimeout(() => fetchAssets(), 500);
     return () => clearTimeout(timeoutId);
   }, [search]);
+
+  const getStatusColor = (statusRaw) => {
+    const status = statusRaw?.toLowerCase() || '';
+    if (status.includes('berfungsi') || status.includes('baik') || status.includes('ok')) return 'bg-green-100 text-green-700 border border-green-200';
+    if (status.includes('rusak') || status.includes('bad')) return 'bg-red-100 text-red-700 border border-red-200';
+    if (status.includes('perbaikan') || status.includes('service')) return 'bg-orange-100 text-orange-700 border border-orange-200';
+    if (status.includes('terkendala') || status.includes('warn')) return 'bg-yellow-100 text-yellow-700 border border-yellow-200';
+    return 'bg-gray-100 text-gray-700 border border-gray-200';
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -87,7 +96,6 @@ const DesktopAssetList = () => {
                                     <td className="p-4 font-mono text-penabur-blue">{asset.barcode}</td>
                                     <td className="p-4 text-gray-600">{asset.serial_number}</td>
                                     
-                                    {/* KOLOM TERPISAH */}
                                     <td className="p-4 text-gray-700">
                                         <div className="flex items-center gap-2">
                                             <Building2 size={14} className="text-gray-400"/>
@@ -109,20 +117,27 @@ const DesktopAssetList = () => {
                                     </td>
 
                                     <td className="p-4 text-center">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                            asset.status === 'Berfungsi' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                                        }`}>
+                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(asset.status)}`}>
                                             {asset.status}
                                         </span>
                                     </td>
                                     <td className="p-4 text-center">
-                                        <button 
-                                            onClick={() => navigate(`/user/asset/${asset.id}`)}
-                                            className="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition-colors"
-                                            title="Lihat Detail"
-                                        >
-                                            <Eye size={18} />
-                                        </button>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <button 
+                                                onClick={() => navigate(`/user/asset/${asset.id}`)}
+                                                className="bg-blue-50 text-blue-600 p-2 rounded-lg hover:bg-blue-600 hover:text-white transition-colors"
+                                                title="Lihat Detail"
+                                            >
+                                                <Eye size={18} />
+                                            </button>
+                                            <button 
+                                                onClick={() => navigate(`/school/${asset.school_id}/asset/${asset.id}/edit`)}
+                                                className="bg-yellow-50 text-yellow-600 p-2 rounded-lg hover:bg-yellow-500 hover:text-white transition-colors"
+                                                title="Edit Aset"
+                                            >
+                                                <Pencil size={18} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
