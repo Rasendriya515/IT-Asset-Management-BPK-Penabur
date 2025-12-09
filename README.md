@@ -13,10 +13,10 @@ Sistem Informasi Manajemen Aset IT berbasis web yang dirancang untuk memodernisa
 
 ## 📸 Tampilan Aplikasi
 
-|              **Dashboard Admin**               |      **Mobile View & QR Scan**       |
-| :--------------------------------------------: | :----------------------------------: |
-| ![Dashboard](screenshots/Dashboard Admin.jpeg) | ![Mobile](screenshots/QR Code.jpeg)  |
-|  _Statistik aset realtime & grafik pengadaan_  | _Akses mudah bagi operator lapangan_ |
+|               **Dashboard Admin**                |             **Halaman Login**             |
+| :----------------------------------------------: | :---------------------------------------: |
+| ![Dashboard](screenshots/Dashboard%20Admin.jpeg) |  ![Login](screenshots/Login%20Page.jpeg)  |
+|   _Statistik aset realtime & grafik pengadaan_   | _Portal masuk dengan keamanan role-based_ |
 
 ---
 
@@ -48,38 +48,4 @@ Panduan ini untuk pengguna yang ingin mencoba menjalankan project ini di kompute
 ```bash
 git clone https://github.com/Rasendriya515/it-asset-management-bpk-penabur.git
 cd it-asset-management-bpk-penabur
-
-cd backend
-# Install Dependencies
-pip install -r requirements.txt
-
-# Jalankan Server Backend
-uvicorn app.main:app --reload --port 8000
-
-cd frontend
-# Install Dependencies
-npm install
-
-# Jalankan Server Frontend
-npm run dev
-
-📂 Struktur Database (ERD)
-Sistem ini menggunakan 7 tabel utama yang saling berelasi untuk menyimpan data operasional:
-
-Users: Data pengguna (Admin/Operator).
-
-Assets: Data inventaris utama (Laptop, PC, dll).
-
-Schools & Areas: Data lokasi dan wilayah sekolah.
-
-ServiceHistories: Riwayat perbaikan aset.
-
-UpdateLogs: Audit trail perubahan data.
-
-👤 Author
-Rafi Rasendriya
-
-Mahasiswa Ilmu Komputer - UBSI
-
-Intern at BPK PENABUR (2025)
 ```
