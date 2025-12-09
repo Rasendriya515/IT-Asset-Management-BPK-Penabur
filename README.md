@@ -1,4 +1,4 @@
-# 🏫 IT Asset Management System - BPK PENABUR
+# 🏫 IT Asset Management - BPK PENABUR
 
 ![React](https://img.shields.io/badge/Frontend-React.js-blue?style=for-the-badge&logo=react)
 ![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi)
