@@ -49,3 +49,50 @@ Panduan ini untuk pengguna yang ingin mencoba menjalankan project ini di kompute
 git clone https://github.com/Rasendriya515/it-asset-management-bpk-penabur.git
 cd it-asset-management-bpk-penabur
 ```
+
+### 2. Setup Backend
+
+Buka terminal baru, masuk ke folder backend, dan jalankan server:
+
+```bash
+cd backend
+# Install Dependencies
+pip install -r requirements.txt
+# Jalankan Server Backend
+uvicorn app.main:app --reload --port 8000
+```
+
+### 3. Setup Frontend
+
+Buka terminal baru lagi, masuk ke folder frontend, dan jalankan:
+
+```bash
+cd frontend
+# Install Dependencies
+npm install
+# Jalankan Server Frontend
+npm run dev
+```
+
+Akses aplikasi di browser: http://localhost:5173
+
+---
+
+## 📂 Struktur Database (ERD)
+
+Sistem ini menggunakan 7 tabel utama yang saling berelasi untuk menyimpan data operasional:
+
+- Users: Data pengguna (Admin/Operator).
+- Assets: Data inventaris utama (Laptop, PC, dll).
+- Schools & Areas: Data lokasi dan wilayah sekolah.
+- ServiceHistories: Riwayat perbaikan aset.
+- UpdateLogs: Audit trail perubahan data.
+
+---
+
+### 👤 Author
+
+**Rafi Rasendriya**
+
+- Mahasiswa Ilmu Komputer - UBSI
+- Intern at BPK PENABUR (2025)
