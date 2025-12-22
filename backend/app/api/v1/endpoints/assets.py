@@ -62,7 +62,28 @@ def read_assets(
         "status": Asset.status,
         "created_at": Asset.created_at,
         "updated_at": Asset.updated_at,
-        "asset_name": Asset.brand
+        "asset_name": Asset.brand,
+        "city_code": Asset.city_code,
+        "type_code": Asset.type_code,
+        "category_code": Asset.category_code,
+        "subcategory_code": Asset.subcategory_code,
+        "procurement_month": Asset.procurement_month,
+        "procurement_year": Asset.procurement_year,
+        "floor": Asset.floor,
+        "sequence_number": Asset.sequence_number,
+        "placement": Asset.placement,
+        "room": Asset.room,
+        "ip_address": Asset.ip_address,
+        "mac_address": Asset.mac_address,
+        "username": Asset.username,
+        "password": Asset.password,
+        "assigned_to": Asset.assigned_to,
+        "ram": Asset.ram,
+        "processor": Asset.processor,
+        "storage": Asset.storage,
+        "os": Asset.os,
+        "connect_to": Asset.connect_to,
+        "channel": Asset.channel
     }
     
     db_sort_field = sort_fields.get(sort_by, Asset.created_at)

@@ -108,8 +108,6 @@ const SchoolDetail = () => {
   };
 
   const handleSort = (key) => {
-    const sortableColumns = ['barcode', 'brand', 'model_series', 'serial_number', 'status'];
-    if (sortableColumns.includes(key)) {
         if (sortBy === key) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
         } else {
@@ -117,8 +115,7 @@ const SchoolDetail = () => {
             setSortOrder('asc');
         }
         setPage(1);
-    }
-  };
+      };
 
   const getVisibleColumns = () => {
     return TABLE_COLUMNS.filter(col => {
