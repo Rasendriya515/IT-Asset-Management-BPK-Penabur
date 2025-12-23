@@ -94,9 +94,9 @@ const ScanQR = () => {
     if (decodedText.includes('/scan-asset/')) {
         const parts = decodedText.split('/scan-asset/');
         const barcode = parts[1];
-        targetUrl = `/scan-result/${barcode}`;
+        targetUrl = `/scan-asset/${barcode}`; 
     } else {
-        targetUrl = `/scan-result/${decodedText}`;
+        targetUrl = `/scan-asset/${decodedText}`;
     }
 
     if (scannerInstance && scannerInstance.isScanning) {

@@ -48,6 +48,13 @@ def validate_ip_mac(db: Session, asset_in: AssetCreate | AssetUpdate, current_id
                     status_code=400, 
                     detail=f"IP Address '{asset_in.ip_address}' sudah ada. IP harus unik untuk kategori {category_check}."
                 )
+            
+@router.get("/barcode/{barcode}", response_model=AssetResponse)
+def read_asset_by_barcode(barcode: str, db: Session = Depends(get_db)):
+    asset = db.query(Asset).filter(Asset.barcode == barcode).first()
+    if not asset:
+        raise HTTPException(status_code=404, detail="Aset dengan barcode tersebut tidak ditemukan")
+    return asset
 
 @router.get("/", response_model=AssetPaginatedResponse)
 def read_assets(
