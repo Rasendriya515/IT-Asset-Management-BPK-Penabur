@@ -125,8 +125,15 @@ const SchoolDetail = () => {
         setPage(1);
       };
 
+  // --- PERBAIKAN UTAMA DISINI ---
   const getVisibleColumns = () => {
     return TABLE_COLUMNS.filter(col => {
+      // 1. KITA EXCLUDE (BUANG) KOLOM SENSITIF DARI LIST UTAMA
+      // Supaya tidak muncul double saat tombol Show diklik
+      if (['assigned_to', 'username', 'password'].includes(col.key)) {
+        return false;
+      }
+
       if (col.showAlways) return true;
       
       if (['ram', 'processor', 'storage', 'os'].includes(col.key)) {
@@ -365,6 +372,7 @@ const SchoolDetail = () => {
                     </th>
                   ))}
                   
+                  {/* Kolom Sensitif hanya muncul jika showSensitive = true */}
                   {showSensitive && <th className="p-4 border-b border-gray-200 bg-orange-50">Pengguna</th>}
                   {showSensitive && <th className="p-4 border-b border-gray-200 bg-orange-50">Username</th>}
                   {showSensitive && <th className="p-4 border-b border-gray-200 bg-orange-50">Password</th>}
@@ -393,13 +401,13 @@ const SchoolDetail = () => {
                         </td>
                       ))}
 
+                      {/* Baris Data Sensitif */}
                       {showSensitive && <td className="p-4 text-gray-700 bg-orange-50/30">{asset.assigned_to || '-'}</td>}
                       {showSensitive && <td className="p-4 text-gray-700 bg-orange-50/30">{asset.username || '-'}</td>}
                       {showSensitive && <td className="p-4 text-gray-700 bg-orange-50/30">******</td>}
 
                       <td className="p-3 text-center sticky right-0 bg-white group-hover:bg-blue-50 shadow-l border-l border-gray-100 z-10">
                         <div className="flex items-center justify-center space-x-2">
-                          {/* ✅ Tombol QR Code (Updated Handler) */}
                           <button onClick={() => handleGenerateQR(asset)} className="bg-purple-50 text-purple-700 p-2 rounded-lg" title="QR"><QrCode size={16}/></button>
                           {role !== 'user' && (
                             <>
@@ -439,7 +447,6 @@ const SchoolDetail = () => {
             </div>
             <div className="p-8 flex flex-col items-center justify-center space-y-6">
               <div className="bg-white p-4 rounded-xl border-4 border-gray-100 shadow-inner">
-                {/* QR Code sekarang menyimpan LINK URL ke halaman scan */}
                 <QRCode id="qr-code-svg" value={getQRContent(selectedAssetQR)} size={200} level="H" />
               </div>
               <div className="text-center space-y-1">
